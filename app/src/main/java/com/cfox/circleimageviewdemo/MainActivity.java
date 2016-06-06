@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if(isA){
+            mImageView.setBorderColor(R.color.colorAccent);
             Glide.with(this).load("http://h.hiphotos.baidu.com/image/pic/item/203fb80e7bec54e7f9c085c3be389b504fc26a3b.jpg").into(mImageView);
             Glide.with(this).load("http://h.hiphotos.baidu.com/image/pic/item/203fb80e7bec54e7f9c085c3be389b504fc26a3b.jpg").into(mImageViewB);
             isA = false;
