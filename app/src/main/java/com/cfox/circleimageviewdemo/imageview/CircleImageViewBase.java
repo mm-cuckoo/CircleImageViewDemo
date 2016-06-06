@@ -65,10 +65,10 @@ public abstract class CircleImageViewBase extends ImageView {
     /**
      * 设置圆形图片边界宽
      * <br/> 默认 边界宽为 10 ，如果想无边界设置 0 即可
-     * @param mBorderWidth
+     * @param borderWidth
      */
-    public void setBorderWidth(int mBorderWidth) {
-        this.mBorderWidth = mBorderWidth;
+    public void setBorderWidth(int borderWidth) {
+        this.mBorderWidth = borderWidth;
     }
 
     /**
