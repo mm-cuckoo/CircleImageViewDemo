@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         mImageView = (CircleImageView) findViewById(R.id.circle_image_view);
-//        mImageView.setIsFill(true);
+        mImageView.setIsFill(true);
         mImageView.setBorderColor(R.color.colorPrimaryDark);
         mImageView.setBorderWidth(15);
         mImageViewB = (ImageView) findViewById(R.id.image_view_b);

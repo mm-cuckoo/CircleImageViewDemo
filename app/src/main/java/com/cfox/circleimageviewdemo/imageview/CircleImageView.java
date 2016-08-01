@@ -38,5 +38,9 @@ public class CircleImageView extends CircleImageViewBase {
         setIsFill(true);
         setBorderColor(R.color.colorPrimaryDark);
         setBorderWidth(15);
+        setText("hello");
+        setTextBackgroundColorRes(R.color.colorPrimaryDark);
+
+        setTextColorRes(R.color.colorAccent);
     }
 }

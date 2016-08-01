@@ -13,6 +13,7 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 /**
  * <br/>************************************************
  * <br/>PROJECT_NAME : CircleImageViewDemo
@@ -28,10 +29,14 @@ public abstract class CircleImageViewBase extends ImageView {
     private static final Xfermode MASK_XFERMODE;
     private Bitmap mask;
     private Paint paint;
-    private int mBorderWidth = 10;                                  //圆形图片边界宽
-    private int mBorderColor = Color.parseColor("#ffffff");         //圆形图片边界颜色
-    private boolean useDefaultStyle = false;                        //使用默认图片显示
-    private boolean isFill = false;                                 //填充
+    private int mBorderWidth = 6;                                                       //圆形图片边界宽
+    private int mBorderColor = Color.parseColor("#F0F0F0");                             //圆形图片边界颜色
+    private boolean useDefaultStyle = false;                                            //使用默认图片显示
+    private boolean isFill = false;                                                     //填充
+    private int mTextBackgroundColor = Color.CYAN;                                      //文字背景
+    private int mTextSize = 50;                                                         //文字大小 默认50
+    private String mText = null;                                                        //显示文字内容
+    private int mTextColor = Color.BLACK;                                               //文字颜色
     static {
         PorterDuff.Mode localMode = PorterDuff.Mode.DST_IN;
         MASK_XFERMODE = new PorterDuffXfermode(localMode);
@@ -89,6 +94,22 @@ public abstract class CircleImageViewBase extends ImageView {
         this.isFill = isFill;
     }
 
+    public void setText(String mText) {
+        this.mText = mText;
+    }
+
+    public void setTextSize(int mTextSize) {
+        this.mTextSize = mTextSize;
+    }
+
+    public void setTextBackgroundColorRes(int mTextBackgroundColor) {
+        this.mTextBackgroundColor = getResources().getColor(mTextBackgroundColor);
+    }
+
+    public void setTextColorRes(int mTextColor) {
+        this.mTextColor = getResources().getColor(mTextColor);
+    }
+
     @Override
     protected void onDraw(Canvas paramCanvas) {
         if (useDefaultStyle) {
@@ -139,20 +160,33 @@ public abstract class CircleImageViewBase extends ImageView {
 
         /** 保存layer */
         int layer = paramCanvas.saveLayer(0.0F, 0.0F, width, height, null, Canvas.ALL_SAVE_FLAG);
+
         /** 设置drawable的大小 */
-        localDrawable.setBounds(0, 0,boundsWidth, boundsHeight);
+        localDrawable.setBounds(0, 0, boundsWidth, boundsHeight);
         /** 将drawable绑定到bitmap(this.mask)上面（drawable只能通过bitmap显示出来） */
+
         localDrawable.draw(paramCanvas);
 
         if (((this.mask == null) || (this.mask.isRecycled()))) {
+
             this.mask = createOvalBitmap(width, height);
         }
 
+        if(mText != null){
+            /** 文字背景 */
+            paramCanvas.save();
+            paramCanvas.clipRect(0, height * 2 / 3 , width, height);
+            paramCanvas.drawColor(mTextBackgroundColor);
+            paramCanvas.restore();
+        }
+
+
         /** 将bitmap画到canvas上面 */
         paramCanvas.drawBitmap(this.mask, 0.0F, 0.0F, this.paint);
+
         /** 将画布复制到layer上 */
         paramCanvas.restoreToCount(layer);
-        drawBorder(paramCanvas, width, height);
+        drawBorder(mText , paramCanvas, width, height);
         ViewGroup.LayoutParams params = getLayoutParams();
         params.width = width;
         params.height = height;
@@ -166,7 +200,7 @@ public abstract class CircleImageViewBase extends ImageView {
      * @param width
      * @param height
      */
-    private void drawBorder(Canvas canvas, final int width, final int height) {
+    private void drawBorder(String textStr ,Canvas canvas, final int width, final int height) {
         if (mBorderWidth == 0) {
             return;
         }
@@ -175,10 +209,23 @@ public abstract class CircleImageViewBase extends ImageView {
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setColor(mBorderColor);
         mBorderPaint.setStrokeWidth(mBorderWidth);
+
+
+        if(textStr != null){
+            Paint textPaint = new Paint();
+            textPaint.setColor(mTextColor);
+            textPaint.setTextSize(mTextSize);
+            textPaint.setTextAlign(Paint.Align.CENTER);
+            Paint.FontMetrics metrics = textPaint.getFontMetrics(); //获取文字信息
+            float textHeight = metrics.bottom - metrics.top;  //文字的高度
+            canvas.drawText(textStr, width / 2,width - (textHeight - 10), textPaint);
+        }
+
         /**
          * 坐标x：view宽度的一般 坐标y：view高度的一般 半径r：因为是view的宽度-border的一半
          */
         canvas.drawCircle(width >> 1, height >> 1, (width - mBorderWidth) >> 1, mBorderPaint);
+
         canvas = null;
     }
 
@@ -195,13 +242,16 @@ public abstract class CircleImageViewBase extends ImageView {
         Bitmap.Config localConfig = Bitmap.Config.ARGB_8888;
         Bitmap localBitmap = Bitmap.createBitmap(width, height, localConfig);
         Canvas localCanvas = new Canvas(localBitmap);
+
         Paint localPaint = new Paint();
         localPaint.setAntiAlias(true);
         /**
          * 设置椭圆的大小(因为椭圆的最外边会和border的最外边重合的，如果图片最外边的颜色很深，有看出有棱边的效果，所以为了让体验更加好，
          * 让其缩进padding px)
          */
+
         localCanvas.drawCircle(width >> 1,height >> 1,width - 2 >> 1, localPaint);
+
         return localBitmap;
     }
 }
